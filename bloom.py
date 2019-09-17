@@ -5,15 +5,18 @@ import numpy
 def convert_and_save(img, nome):
     img = img * 255
     cv2.imwrite('{}.jpg'.format(nome), img)            
-    
-def bloom_gaussian(caminho, limiar, sigma, alfa, beta):
+
+def filtro_bright_pass(caminho):
     bright_pass = cv2.imread(caminho)
-    for i in range(bright_pass.shape[0]):#brightpass
+    for i in range(bright_pass.shape[0]):
         for j in range(bright_pass.shape[1]):
             if((0.299*bright_pass[i, j, 2] + 0.587*bright_pass[i, j, 1] + 0.114*bright_pass[i, j, 0]) < limiar):
                 bright_pass[i, j, :] = 0
     cv2.imshow('bright-pass', bright_pass)
+    return bright_pass
 
+def bloom_gaussian(caminho, limiar, sigma, alfa, beta):
+    bright_pass = filtro_bright_pass(caminho)
     for i in range(5): #cria as 5 imagens com o filtro da gaussiana que serão usadas para compor a máscara
         blur = cv2.GaussianBlur(bright_pass, (0, 0), sigma)
         cv2.imwrite('{}.jpg'.format(i), blur)
