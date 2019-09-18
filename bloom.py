@@ -46,10 +46,13 @@ def bloom_gaussian(caminho, limiar, sigma, alfa, beta):
   
 def bloom_boxblur(caminho, janela, alfa, beta):
     bright_pass = filtro_bright_pass(caminho)
+    blur = cv2.medianBlur(bright_pass, janela)
     for i in range(5):
-        blur = cv2.medianBlur(bright_pass, janela)
-        cv2.imwrite('{}b.jpg'.format(i), blur)
-        janela = janela * 3 
+	    aux = bright_pass.copy()
+	    for j in range(5):
+		    aux = cv2.blur(aux, (janela,janela))
+	    cv2.imwrite('{}b.jpg'.format(i), aux)
+	    janela = janela + 6
 
     mask = cv2.imread('0b.jpg').astype('float32')/255        #cria a máscara
     for i in range(4):                      
